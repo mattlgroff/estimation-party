@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-}
+    env: {
+        NEXT_APP_SUPABASE_URL: process.env.NEXT_APP_SUPABASE_URL,
+        NEXT_APP_SUPABASE_READONLY_KEY: process.env.NEXT_APP_SUPABASE_READONLY_KEY,
+    },
+    reactStrictMode: true,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -1,10 +1,24 @@
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 export default function Home() {
     const router = useRouter();
+
+    // Refs
+    const joinCodeInputRef = useRef<HTMLInputElement | null>(null);
+
+    // State
     const [joinCode, setJoinCode] = useState('');
 
+    // Effects
+    // Focus the name input field once it's rendered, if its rendered.
+    useEffect(() => {
+        if (joinCodeInputRef.current) {
+            joinCodeInputRef.current.focus();
+        }
+    }, []);
+
+    // Handlers
     const handleCreateRoom = async () => {
         const res = await fetch('/api/create-room', {
             method: 'POST',
@@ -15,8 +29,6 @@ export default function Home() {
         });
 
         const data = await res.json();
-
-        console.log('data', data);
 
         if (data.success) {
             router.push(`/room/${data.room.join_code}`);
@@ -41,6 +53,8 @@ export default function Home() {
 
             <form onSubmit={handleJoinRoom} className="mt-8">
                 <input
+                    id="join-code"
+                    ref={joinCodeInputRef}
                     type="text"
                     value={joinCode}
                     onChange={event => setJoinCode(event.target.value)}
