@@ -48,7 +48,7 @@ export default function Home() {
             <div className="mb-6 text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">It's an Estimation Party.</h1>
                 <p className="mt-6 text-lg leading-8 text-gray-600">
-                    A simple solution to Planning Poker. Create a room, invite your team, and start estimating. Rooms last for 24 hours. Not
+                    A simple solution to Planning Poker. Create a room, invite your team, and start estimating. Rooms last for 24 hours. No
                     accounts, just use unique names.
                 </p>
             </div>
