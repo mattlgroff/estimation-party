@@ -76,8 +76,6 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
         userEstimation => userEstimation.user_id === user.id && userEstimation.estimation_id === estimations[0].id
     )?.estimate;
 
-    console.log('userHasEstimated', userHasEstimated);
-
     return (
         <div className="lg:col-span-2">
             {estimationInProgress && estimations.length > 0 && (
