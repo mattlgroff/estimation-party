@@ -44,8 +44,14 @@ export default function Home() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center py-2">
-            <h1 className="mb-8 text-4xl font-bold">Estimation Party</h1>
+        <main className="flex flex-grow flex-col items-center justify-center py-2">
+            <div className="mb-6 text-center">
+                <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">It's an Estimation Party.</h1>
+                <p className="mt-6 text-lg leading-8 text-gray-600">
+                    A simple solution to Planning Poker. Create a room, invite your team, and start estimating. Rooms last for 24 hours. Not
+                    accounts, just use unique names.
+                </p>
+            </div>
 
             <button onClick={handleCreateRoom} className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
                 Create a new room

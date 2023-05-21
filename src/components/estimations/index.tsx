@@ -15,6 +15,9 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
 
     const makeEstimate = async (event: React.FormEvent<HTMLFormElement>, estimate: string) => {
         event.preventDefault();
+
+        if (!estimate) return;
+
         try {
             const res = await fetch('/api/make-estimate', {
                 method: 'POST',
@@ -93,7 +96,7 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
                     )}
                     <p className="mb-4">Let's make those estimates 🎊</p>
                     <p className="mb-4">
-                        Choose a Fibonacci number 0, 1, 2, 3, 5, 8 , 13, etc or click unsure if you have questions or doubts.
+                        Choose a Fibonacci number 0, 1, 2, 3, 5, 8 , 13, 21, 34, 55, 89, 144... or click "I'm not sure or I have questions".
                     </p>
                     <form onSubmit={event => makeEstimate(event, estimate)}>
                         <input
@@ -112,7 +115,7 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
                         </button>
                     </form>
 
-                    <p className="mt-4">You have estimated: {userHasEstimated ? userHasEstimated : 'Not yet'}</p>
+                    {userHasEstimated && <p className="mt-4">You have estimated: {userHasEstimated}</p>}
                 </div>
             )}
 
