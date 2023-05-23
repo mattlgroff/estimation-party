@@ -21,3 +21,6 @@ Then run the following commands:
 npm install
 npm run dev
 ```
+
+## Issues & Requests
+If you find any issues with the app or have requests, please create an issue [here](https://github.com/mattlgroff/estimation-party/issues)
