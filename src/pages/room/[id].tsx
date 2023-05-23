@@ -10,6 +10,8 @@ import { getEstimationsByRoomId, getUserEstimationsByEstimationIds } from '@deps
 import { getCookie } from 'cookies-next';
 import { RoomState, useSupabaseSubscriptions } from '@deps/hooks/useSupabaseSubscriptions';
 import Estimations from '@deps/components/estimations';
+import Head from 'next/head';
+import CopyToClipboard from '@deps/components/copy-to-clipboard';
 
 interface JoinCodePageProps {
     error?: string;
@@ -18,9 +20,18 @@ interface JoinCodePageProps {
     initialUserEstimations?: UserEstimation[];
     initialUsers?: User[];
     room?: Room;
+    inviteLink?: string;
 }
 
-const JoinCodePage = ({ room, initialName, initialUsers, initialEstimations, initialUserEstimations, error }: JoinCodePageProps) => {
+const JoinCodePage = ({
+    room,
+    initialName,
+    initialUsers,
+    initialEstimations,
+    initialUserEstimations,
+    inviteLink,
+    error,
+}: JoinCodePageProps) => {
     // Refs
     const nameInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,87 +94,112 @@ const JoinCodePage = ({ room, initialName, initialUsers, initialEstimations, ini
 
     if (error || !room) {
         return (
-            <div className="flex flex-grow items-center justify-center text-center">
-                <p className="text-2xl">{error}</p>
-                <Link className="text-blue-600" href="/">
-                    Go to Homepage
-                </Link>
-            </div>
+            <>
+                <Head>
+                    <title>Estimation Party - Room Not Found</title>
+                </Head>
+                <div className="flex flex-grow items-center justify-center text-center">
+                    <p className="text-2xl">{error}</p>
+                    <Link className="text-blue-600" href="/">
+                        Go to Homepage
+                    </Link>
+                </div>
+            </>
         );
     }
 
     if (!roomState.joinedRoom) {
         return (
-            <div className="flex flex-grow items-center justify-center py-2">
-                <div className="w-full max-w-md space-y-8">
-                    <div>
-                        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                            Welcome to the Estimation Party Room! Join Code: {room.join_code}
-                        </h2>
-                        <p className="mt-2 text-center text-sm text-gray-600">Please enter your name</p>
-                    </div>
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                        <input type="hidden" name="remember" defaultValue="true" />
-                        <div className="-space-y-px rounded-md shadow-sm">
-                            <div>
-                                <label htmlFor="name" className="sr-only">
-                                    Name
-                                </label>
-                                <input
-                                    id="name"
-                                    ref={nameInputRef}
-                                    name="name"
-                                    type="text"
-                                    required
-                                    className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                    placeholder="Name"
-                                />
-                            </div>
-                        </div>
+            <>
+                <Head>
+                    <title>{`Estimation Party - ${room.join_code}`}</title>
+                </Head>
+                <div className="flex flex-grow items-center justify-center py-2">
+                    <div className="w-full max-w-md space-y-8">
                         <div>
-                            <button
-                                type="submit"
-                                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3"></span>
-                                Join Room
-                            </button>
+                            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                                Welcome to the Estimation Party Room! Join Code: {room.join_code}
+                            </h2>
+                            <p className="mt-2 text-center text-sm text-gray-600">Please enter your name</p>
                         </div>
-                    </form>
+                        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                            <input type="hidden" name="remember" defaultValue="true" />
+                            <div className="-space-y-px rounded-md shadow-sm">
+                                <div>
+                                    <label htmlFor="name" className="sr-only">
+                                        Name
+                                    </label>
+                                    <input
+                                        id="name"
+                                        ref={nameInputRef}
+                                        name="name"
+                                        type="text"
+                                        required
+                                        className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                        placeholder="Name"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <button
+                                    type="submit"
+                                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                >
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3"></span>
+                                    Join Room
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="mx-2 my-4">
-            <div className="my-4">
-                {roomState.leadName === roomState.name && (
-                    <LeadControls room={room} estimationInProgress={roomState.estimationInProgress} />
-                )}
-            </div>
+        <>
+            <Head>
+                <title>
+                    {roomState.estimationInProgress && estimations[0]?.ticket_name
+                        ? `Estimating ${estimations[0].ticket_name}`
+                        : `Estimation Party - ${room.join_code}`}
+                </title>
+            </Head>
+            <div className="mx-2 my-4">
+                <div className="mt-4">
+                    <h3 className="justify-left flex items-center text-lg font-bold">
+                        Copy the invite link to this room ({room.join_code}): <CopyToClipboard textToCopy={inviteLink as string} />
+                    </h3>
+                </div>
 
-            <div className="my-4 gap-4 lg:grid lg:grid-cols-3">
-                <Estimations
-                    estimationInProgress={roomState.estimationInProgress}
-                    estimations={estimations}
-                    user={roomState.users.find(user => user.name === roomState.name) as User}
-                    userEstimations={userEstimations}
-                    users={roomState.users}
-                />
+                <div className="my-4">
+                    {roomState.leadName === roomState.name && (
+                        <LeadControls room={room} estimationInProgress={roomState.estimationInProgress} />
+                    )}
+                </div>
 
-                <div className="lg:col-span-1">
-                    <UserList
+                <div className="my-4 gap-4 lg:grid lg:grid-cols-3">
+                    <Estimations
                         estimationInProgress={roomState.estimationInProgress}
                         estimations={estimations}
-                        leadName={roomState.leadName}
-                        name={roomState.name}
+                        user={roomState.users.find(user => user.name === roomState.name) as User}
                         userEstimations={userEstimations}
                         users={roomState.users}
                     />
+
+                    <div className="lg:col-span-1">
+                        <UserList
+                            estimationInProgress={roomState.estimationInProgress}
+                            estimations={estimations}
+                            leadName={roomState.leadName}
+                            name={roomState.name}
+                            userEstimations={userEstimations}
+                            users={roomState.users}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
@@ -188,6 +224,12 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
         };
     }
 
+    // Generate invite link for the room
+    // Determine the protocol
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const inviteLink = `${protocol}://${req.headers.host}/room/${room.join_code}`;
+
+    // Get initial data for the room
     const initialUsers = await getUsersByRoomId(room.id);
 
     const initialEstimations = (await getEstimationsByRoomId(room.id)) || [];
@@ -199,7 +241,7 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
     const initialName = getCookie(`${room.id}-name`, { req, res }) || '';
 
     return {
-        props: { room, initialUsers, initialEstimations, initialUserEstimations, initialName },
+        props: { room, initialUsers, initialEstimations, initialUserEstimations, initialName, inviteLink },
     };
 }
 

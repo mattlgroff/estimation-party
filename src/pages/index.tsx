@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 export default function Home() {
     const router = useRouter();
@@ -9,6 +10,7 @@ export default function Home() {
 
     // State
     const [joinCode, setJoinCode] = useState('');
+    const [isCreatingRoom, setIsCreatingRoom] = useState(false);
 
     // Effects
     // Focus the name input field once it's rendered, if its rendered.
@@ -20,6 +22,8 @@ export default function Home() {
 
     // Handlers
     const handleCreateRoom = async () => {
+        setIsCreatingRoom(true);
+
         const res = await fetch('/api/create-room', {
             method: 'POST',
             headers: {
@@ -44,34 +48,43 @@ export default function Home() {
     };
 
     return (
-        <main className="flex flex-grow flex-col items-center justify-center py-2">
-            <div className="mb-6 text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">It's an Estimation Party.</h1>
-                <p className="mt-6 text-lg leading-8 text-gray-600">
-                    A simple solution to Planning Poker. Create a room, invite your team, and start estimating. Rooms last for 24 hours. No
-                    accounts, just use unique names.
-                </p>
-            </div>
+        <>
+            <Head>
+                <title>Estimation Party</title>
+            </Head>
+            <main className="flex flex-grow flex-col items-center justify-center py-2">
+                <div className="mb-6 text-center">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">It's an Estimation Party.</h1>
+                    <p className="mt-6 text-lg leading-8 text-gray-600">
+                        A simple solution to Planning Poker. Create a room, invite your team, and start estimating. Rooms last for 24 hours.
+                        No accounts, just use unique names.
+                    </p>
+                </div>
 
-            <button onClick={handleCreateRoom} className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
-                Create a new room
-            </button>
-
-            <form onSubmit={handleJoinRoom} className="mt-8">
-                <input
-                    id="join-code"
-                    ref={joinCodeInputRef}
-                    type="text"
-                    value={joinCode}
-                    onChange={event => setJoinCode(event.target.value)}
-                    maxLength={6}
-                    placeholder="Enter join code"
-                    className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-                />
-                <button type="submit" className="mt-4 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
-                    Join a room
+                <button
+                    onClick={handleCreateRoom}
+                    disabled={isCreatingRoom}
+                    className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                >
+                    {isCreatingRoom ? 'Creating...' : 'Create a new room'}
                 </button>
-            </form>
-        </main>
+
+                <form onSubmit={handleJoinRoom} className="mt-8">
+                    <input
+                        id="join-code"
+                        ref={joinCodeInputRef}
+                        type="text"
+                        value={joinCode}
+                        onChange={event => setJoinCode(event.target.value)}
+                        maxLength={6}
+                        placeholder="Enter join code"
+                        className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+                    />
+                    <button type="submit" className="mt-4 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                        Join a room
+                    </button>
+                </form>
+            </main>
+        </>
     );
 }
