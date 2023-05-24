@@ -13,8 +13,9 @@ const LeadControlsModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const ticketName = (e.target as any).ticketName.value;
-        const ticketHref = (e.target as any).ticketHref.value;
+        const formData = new FormData(e.target as HTMLFormElement);
+        const ticketName = formData.get('ticketName') as string;
+        const ticketHref = formData.get('ticketHref') as string;
 
         onSubmit(ticketName, ticketHref);
     };
@@ -30,6 +31,7 @@ const LeadControlsModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) 
                         </label>
                         <input
                             id="ticketName"
+                            name="ticketName"
                             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                             type="text"
                             required
@@ -41,6 +43,7 @@ const LeadControlsModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) 
                         </label>
                         <input
                             id="ticketHref"
+                            name="ticketHref"
                             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                             type="text"
                         />

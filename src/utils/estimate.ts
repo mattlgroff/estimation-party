@@ -7,7 +7,7 @@ export const fib = (n: number): number[] => {
     return fibSequence;
 };
 
+export const fibonacciSequenceForCards = [...new Set(fib(11).map(n => n.toString()))];
+
 // Define valid estimates
-export const validEstimates = fib(15)
-    .map(n => n.toString())
-    .concat('?'); // fib(15) gives Fibonacci sequence up to 987
+export const validEstimates = [...fibonacciSequenceForCards, '?'];

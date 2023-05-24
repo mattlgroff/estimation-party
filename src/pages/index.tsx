@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 
 export default function Home() {
     const router = useRouter();
@@ -52,7 +53,7 @@ export default function Home() {
             <Head>
                 <title>Estimation Party</title>
             </Head>
-            <main className="flex flex-grow flex-col items-center justify-center py-2">
+            <main className="flex flex-grow flex-col items-center justify-center py-2 ">
                 <div className="mb-6 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">It's an Estimation Party.</h1>
                     <p className="mt-6 text-lg leading-8 text-gray-600">
@@ -80,10 +81,27 @@ export default function Home() {
                         placeholder="Enter join code"
                         className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                     />
-                    <button type="submit" className="mt-4 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                    <button
+                        type="submit"
+                        disabled={!joinCode || joinCode.length !== 6}
+                        className="mt-4 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    >
                         Join a room
                     </button>
                 </form>
+                <footer className="fixed bottom-0 flex w-full items-center justify-between bg-blue-500 px-4 py-2 text-white sm:px-6 lg:px-8">
+                    <p className="text-sm">
+                        &copy; {new Date().getFullYear()}
+                        <Link href="https://groff.dev/" className="ml-2 text-white hover:text-blue-200">
+                            Matt Groff @ groff.dev
+                        </Link>
+                    </p>{' '}
+                    <p className="text-sm">
+                        <Link href="https://github.com/mattlgroff/estimation-party" className="text-white hover:text-blue-200">
+                            MIT License - Github Repository
+                        </Link>
+                    </p>
+                </footer>
             </main>
         </>
     );
