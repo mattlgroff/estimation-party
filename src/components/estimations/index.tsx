@@ -44,9 +44,9 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
         }
     };
 
-    const userHasEstimated = userEstimations.find(
-        userEstimation => userEstimation.user_id === user.id && userEstimation.estimation_id === estimations[0].id
-    )?.estimate;
+    const userHasEstimated =
+        userEstimations.find(userEstimation => userEstimation.user_id === user.id && userEstimation.estimation_id === estimations[0].id)
+            ?.estimate && !!estimationInProgress;
 
     return (
         <div className="lg:col-span-2">

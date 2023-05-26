@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase as supabaseClient } from '@deps/lib/supabase-client';
+import { getUserEstimationsForRoomId, supabase as supabaseClient } from '@deps/lib/supabase-client';
 import type { Estimation, Room, User, UserEstimation } from '@deps/types';
 
 export interface RoomState {
@@ -19,6 +19,7 @@ export const useSupabaseSubscriptions = (
     setUserEstimations: React.Dispatch<React.SetStateAction<UserEstimation[]>>
 ): void => {
     const [currentEstimationId, setCurrentEstimationId] = useState<number | null>(room?.current_estimation_id || null);
+    const estimationsMap = new Map();
 
     useEffect(() => {
         if (!room) return;
@@ -45,26 +46,6 @@ export const useSupabaseSubscriptions = (
             )
             .subscribe();
 
-        // User Update (Soft Delete)
-        const userUpdateChannel = supabaseClient
-            .channel('realtime users update')
-            .on(
-                'postgres_changes',
-                {
-                    event: 'UPDATE',
-                    schema: 'public',
-                    table: 'users',
-                    filter: `room_id=eq.${room.id}`,
-                },
-                payload => {
-                    setRoomState(prevState => ({
-                        ...prevState,
-                        users: prevState.users.filter(user => user.id !== payload.old.id),
-                    }));
-                }
-            )
-            .subscribe();
-
         // Room Updated
         const roomUpdatedChannel = supabaseClient
             .channel('realtime rooms update')
@@ -76,7 +57,7 @@ export const useSupabaseSubscriptions = (
                     table: 'rooms',
                     filter: `id=eq.${room.id}`,
                 },
-                payload => {
+                async payload => {
                     const newRoom = payload.new as Room;
 
                     setRoomState(prevState => ({
@@ -86,6 +67,10 @@ export const useSupabaseSubscriptions = (
                     }));
 
                     setCurrentEstimationId(newRoom.current_estimation_id);
+
+                    // This makes sure everyone in the room has all of the past estimations guaranteed.
+                    const fetchedUserEstimations = await getUserEstimationsForRoomId(room.id);
+                    setUserEstimations(fetchedUserEstimations as UserEstimation[]);
                 }
             )
             .subscribe();
@@ -112,7 +97,6 @@ export const useSupabaseSubscriptions = (
         // Cleanup function to remove the subscriptions when the component unmounts
         return () => {
             supabaseClient.removeChannel(userAddedChannel);
-            supabaseClient.removeChannel(userUpdateChannel);
             supabaseClient.removeChannel(roomUpdatedChannel);
             supabaseClient.removeChannel(estimationInsertChannel);
         };
@@ -134,8 +118,9 @@ export const useSupabaseSubscriptions = (
                 },
                 payload => {
                     const newUserEstimation = payload.new as UserEstimation;
+                    estimationsMap.set(newUserEstimation.user_id + newUserEstimation.estimation_id, newUserEstimation);
 
-                    setUserEstimations(prevState => [...prevState, newUserEstimation]);
+                    setUserEstimations([...estimationsMap.values()]);
                 }
             )
             .subscribe();
@@ -153,15 +138,9 @@ export const useSupabaseSubscriptions = (
                 },
                 payload => {
                     const updatedUserEstimation = payload.new as UserEstimation;
+                    estimationsMap.set(updatedUserEstimation.user_id + updatedUserEstimation.estimation_id, updatedUserEstimation);
 
-                    setUserEstimations(prevState => [
-                        ...prevState.filter(
-                            userEstimation =>
-                                userEstimation.user_id !== updatedUserEstimation.user_id &&
-                                userEstimation.estimation_id !== updatedUserEstimation.estimation_id
-                        ),
-                        updatedUserEstimation,
-                    ]);
+                    setUserEstimations([...estimationsMap.values()]);
                 }
             )
             .subscribe();

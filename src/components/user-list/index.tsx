@@ -16,9 +16,10 @@ const UserList: React.FC<UserListProps> = ({ estimationInProgress, leadName, nam
             <h2 className="mb-4 text-2xl font-bold">Party Members 🥳</h2>
             <ul className="space-y-2">
                 {users.map(user => {
-                    const userHasEstimated = userEstimations.find(
-                        userEstimation => userEstimation.user_id === user.id && userEstimation.estimation_id === estimations[0].id
-                    )?.estimate;
+                    const userHasEstimated =
+                        userEstimations.find(
+                            userEstimation => userEstimation.user_id === user.id && userEstimation.estimation_id === estimations[0].id
+                        )?.estimate && !!estimationInProgress;
 
                     const classes = clsx('flex items-center justify-between p-2', {
                         'font-bold text-blue-600': userHasEstimated,

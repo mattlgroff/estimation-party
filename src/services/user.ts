@@ -1,7 +1,7 @@
 import { supabase } from '@deps/lib/supabase';
 import { User } from '@deps/types';
 
-export const getUsersByRoomId = async (room_id: string) => {
+export const getUsersByRoomId = async (room_id: number) => {
     const { data: users } = await supabase.from('users').select('*').eq('room_id', room_id);
 
     return users;
