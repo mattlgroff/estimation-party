@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
     const router = useRouter();
@@ -12,6 +12,7 @@ export default function Home() {
     // State
     const [joinCode, setJoinCode] = useState('');
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+    const [isJoiningRoom, setIsJoiningRoom] = useState(false);
 
     // Effects
     // Focus the name input field once it's rendered, if its rendered.
@@ -45,6 +46,8 @@ export default function Home() {
 
     const handleJoinRoom = (event: any) => {
         event.preventDefault();
+        setIsJoiningRoom(true);
+
         router.push(`/room/${joinCode.toUpperCase()}`);
     };
 
@@ -78,15 +81,15 @@ export default function Home() {
                         value={joinCode}
                         onChange={event => setJoinCode(event.target.value)}
                         maxLength={6}
-                        placeholder="Enter join code"
+                        placeholder="Enter join code (6 characters long)"
                         className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                     />
                     <button
                         type="submit"
-                        disabled={!joinCode || joinCode.length !== 6}
-                        className="mt-4 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                        disabled={!joinCode || joinCode.length !== 6 || isJoiningRoom}
+                        className="mt-4 w-full cursor-pointer rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                     >
-                        Join a room
+                        {isJoiningRoom ? 'Joining...' : 'Join a room'}
                     </button>
                 </form>
 
@@ -107,10 +110,12 @@ export default function Home() {
                                 </p>
                             </blockquote>
                             <figcaption className="mt-10">
-                                <img
+                                <Image
+                                    src="/images/estimation-party-testimonial-1.jpg"
+                                    width={100}
+                                    height={100}
                                     className="mx-auto h-10 w-10 rounded-full"
-                                    src="https://media.licdn.com/dms/image/C5603AQHKFTl_yEb5hw/profile-displayphoto-shrink_100_100/0/1660155050233?e=1691020800&v=beta&t=KZNbc_iB1jPIcSS9lE2t7VUrikhHYgNKx4C4QSa7Vf4"
-                                    alt=""
+                                    alt="Image of Meagan Rowell, product manager @ umbrage"
                                 />
                                 <div className="mt-4 flex items-center justify-center space-x-3 text-base">
                                     <div className="font-semibold text-gray-900">Meagan Rowell</div>
@@ -123,20 +128,6 @@ export default function Home() {
                         </figure>
                     </div>
                 </section>
-
-                <footer className="fixed bottom-0 flex w-full items-center justify-between bg-blue-500 px-4 py-2 text-white sm:px-6 lg:px-8">
-                    <p className="text-sm">
-                        &copy; {new Date().getFullYear()}
-                        <Link href="https://groff.dev/" className="ml-2 text-white hover:text-blue-200">
-                            Matt Groff @ groff.dev
-                        </Link>
-                    </p>{' '}
-                    <p className="text-sm">
-                        <Link href="https://github.com/mattlgroff/estimation-party" className="text-white hover:text-blue-200">
-                            MIT License - Github Repository
-                        </Link>
-                    </p>
-                </footer>
             </main>
         </>
     );

@@ -98,10 +98,10 @@ const JoinCodePage = ({
                 <Head>
                     <title>Estimation Party - Room Not Found</title>
                 </Head>
-                <div className="flex flex-grow items-center justify-center text-center">
-                    <p className="text-2xl">{error}</p>
+                <div className="flex flex-grow flex-col items-center justify-center text-center text-2xl">
+                    <p>{error}</p>
                     <Link className="text-blue-600" href="/">
-                        Go to Homepage
+                        Go back to Homepage?
                     </Link>
                 </div>
             </>
@@ -178,16 +178,18 @@ const JoinCodePage = ({
                     )}
                 </div>
 
-                <div className="my-4 gap-4 lg:grid lg:grid-cols-3">
-                    <Estimations
-                        estimationInProgress={roomState.estimationInProgress}
-                        estimations={estimations}
-                        user={roomState.users.find(user => user.name === roomState.name) as User}
-                        userEstimations={userEstimations}
-                        users={roomState.users}
-                    />
+                <div className="my-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    <div className="order-2 lg:order-1 lg:col-span-2">
+                        <Estimations
+                            estimationInProgress={roomState.estimationInProgress}
+                            estimations={estimations}
+                            user={roomState.users.find(user => user.name === roomState.name) as User}
+                            userEstimations={userEstimations}
+                            users={roomState.users}
+                        />
+                    </div>
 
-                    <div className="lg:col-span-1">
+                    <div className="order-1 lg:order-2">
                         <UserList
                             estimationInProgress={roomState.estimationInProgress}
                             estimations={estimations}
