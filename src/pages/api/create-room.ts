@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createRoom } from '@deps/services/room';
 import { Room } from '@deps/types';
+import * as Sentry from '@sentry/nextjs';
 
 interface CreateRoomResponse {
     success?: boolean;
@@ -17,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const room = await createRoom();
         return res.status(200).json({ success: true, room });
     } catch (error) {
+        Sentry.captureException(error);
         console.error(error);
         if (error instanceof Error) {
             return res.status(500).json({ error: error.message });

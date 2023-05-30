@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Estimation, UserEstimation, User } from '@deps/types';
 import { validEstimates } from '@deps/utils/estimate';
+import * as Sentry from '@sentry/nextjs';
 
 interface EstimationsProps {
     estimationInProgress: boolean;
@@ -38,6 +39,7 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
                 throw new Error(error ? error : 'Sorry, there was an error making your estimate. Please try again.');
             }
         } catch (error) {
+            Sentry.captureException(error);
             console.error(error);
             alert(error);
             // TODO: Error Toast instead of Alert

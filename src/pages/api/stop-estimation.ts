@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getRoom, updateCurrentEstimation } from '@deps/services/room';
 import { Room } from '@deps/types';
+import * as Sentry from '@sentry/nextjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -21,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({ success: true });
     } catch (error) {
+        Sentry.captureException(error);
         console.error(error);
         if (error instanceof Error) {
             return res.status(500).json({ error: error.message });

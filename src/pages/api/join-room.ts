@@ -3,6 +3,7 @@ import { User } from '@deps/types';
 import { checkIfUserExists, insertNewUser } from '@deps/services/user';
 import { getRoom, updateLeadName } from '@deps/services/room';
 import { setCookie } from 'cookies-next';
+import * as Sentry from '@sentry/nextjs';
 
 interface JoinRoomResponse {
     success?: boolean;
@@ -47,6 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         return res.status(200).json({ success: true, is_lead, user: existingUser });
     } catch (error) {
+        Sentry.captureException(error);
         console.error(error);
         if (error instanceof Error) {
             return res.status(500).json({ error: error.message });

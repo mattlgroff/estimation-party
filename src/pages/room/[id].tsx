@@ -12,7 +12,7 @@ import { RoomState, useSupabaseSubscriptions } from '@deps/hooks/useSupabaseSubs
 import Estimations from '@deps/components/estimations';
 import Head from 'next/head';
 import CopyToClipboard from '@deps/components/copy-to-clipboard';
-
+import * as Sentry from '@sentry/nextjs';
 interface JoinCodePageProps {
     error?: string;
     initialName?: string;
@@ -76,7 +76,7 @@ const JoinCodePage = ({
                 }),
             });
 
-            const { success, user } = await res.json();
+            const { success, user, error } = await res.json();
 
             if (success) {
                 setRoomState(prevState => ({
@@ -85,6 +85,7 @@ const JoinCodePage = ({
                     name: user.name,
                 }));
             } else {
+                Sentry.captureException(error);
                 alert('Sorry, there was an error joining the room. Please try again.');
             }
         } else {

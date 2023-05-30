@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '@deps/components/lead-controls/modal';
 import { Room } from '@deps/types';
+import * as Sentry from '@sentry/nextjs';
 
 interface LeadControlsProps {
     estimationInProgress: boolean;
@@ -23,12 +24,13 @@ const LeadControls: React.FC<LeadControlsProps> = ({ estimationInProgress, room 
             }),
         });
 
-        const { success } = await res.json();
+        const { success, error } = await res.json();
 
         if (success) {
             setModalOpen(false);
             // At this point the realtime subscription will update the UI for everyone listening to start the estimation
         } else {
+            Sentry.captureException(error);
             alert('Sorry, there was an error starting the estimation. Please try again.');
         }
     };
@@ -44,11 +46,12 @@ const LeadControls: React.FC<LeadControlsProps> = ({ estimationInProgress, room 
             }),
         });
 
-        const { success } = await res.json();
+        const { success, error } = await res.json();
 
         if (success) {
             // At this point the realtime subscription will update the UI for everyone listening to stop the estimation
         } else {
+            Sentry.captureException(error);
             alert('Sorry, there was an error stopping the estimation. Please try again.');
         }
     };

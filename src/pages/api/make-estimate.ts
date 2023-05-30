@@ -1,7 +1,7 @@
-// api/make-estimate.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { makeUserEstimate } from '@deps/services/estimation';
 import { validEstimates } from '@deps/utils/estimate';
+import * as Sentry from '@sentry/nextjs';
 
 interface MakeEstimateResponse {
     success?: boolean;
@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         return res.status(200).json({ success: true });
     } catch (error) {
+        Sentry.captureException(error);
         console.error(error);
         if (error instanceof Error) {
             return res.status(500).json({ error: error.message });
