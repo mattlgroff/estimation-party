@@ -15,6 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const { user_id, estimation_id, estimate } = req.body;
 
+    // Check if user_id exists
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id.' });
+    }
+
     // Check if estimate is valid (Fibonacci number or ?)
     if (!estimate || !validEstimates.includes(estimate)) {
         return res.status(400).json({ error: 'Invalid estimate, please use a Fibonacci number or a ?.' });
