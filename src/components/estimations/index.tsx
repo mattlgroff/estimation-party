@@ -18,6 +18,11 @@ const Estimations: React.FC<EstimationsProps> = ({ estimationInProgress, estimat
     const makeEstimate = async (estimate: string) => {
         if (!estimate) return;
 
+        if (!user?.id) {
+            alert("We couldn't find your user ID. Please refresh the page and try again.");
+            return;
+        }
+
         try {
             const res = await fetch('/api/make-estimate', {
                 method: 'POST',
